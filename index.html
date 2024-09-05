@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeetCode Question Tracker</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            letter-spacing: 2px;
+        }
+
+        .filters {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-bar {
+            flex-grow: 1;
+            margin-right: 20px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .view-toggle button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .view-toggle button:hover {
+            background-color: #2980b9;
+        }
+
+        .question-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .question-card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+        }
+
+        .question-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .question-header {
+            background-color: #3498db;
+            color: white;
+            padding: 15px;
+        }
+
+        .question-header h2 {
+            font-size: 1.2em;
+            margin: 0;
+        }
+
+        .question-body {
+            padding: 20px;
+        }
+
+        .question-card textarea {
+            width: 100%;
+            height: 100px;
+            border: 1px solid #e0e0e0;
+            padding: 10px;
+            border-radius: 4px;
+            resize: vertical;
+            font-family: inherit;
+            margin-bottom: 15px;
+        }
+
+        .confidence {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .slider {
+            flex-grow: 1;
+            appearance: none;
+            height: 5px;
+            background: #d1d1d1;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            border-radius: 5px;
+        }
+
+        .slider:hover {
+            opacity: 1;
+        }
+
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #3498db;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+
+        .confidence-display {
+            margin-left: 10px;
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .complete {
+            display: flex;
+            align-items: center;
+        }
+
+        .complete-checkbox {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>LeetCode Question Tracker</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="filters">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search questions...">
+            </div>
+            <div class="view-toggle">
+                <button id="toggleView">Toggle List/Grid View</button>
+            </div>
+        </div>
+        <div class="question-list" id="questionList"></div>
+    </div>
+
+    <script>
+        // Array of LeetCode questions
+        const questions = ["Two Sum", "Longest Substring Without Repeating Characters", "Trapping Rain Water", "LRU Cache", "Recyclable and Low Fat Products", "Minimum Number of Operations to Make X and Y Equal", "Maximum Number That Sum of the Prices Is Less Than or Equal to K", "Valid Parentheses", "Merge Sorted Array", "Integer to English Words", "Reorder Routes to Make All Paths Lead to the City Zero", "Merge Strings Alternately", "Search in Rotated Sorted Array", "Group Anagrams", "Merge Intervals", "Reverse Words in a String", "LFU Cache", "Create Hello World Function", "Longest Palindromic Substring", "Reverse Integer", "String to Integer (atoi)", "Palindrome Number", "Letter Combinations of a Phone Number", "Merge k Sorted Lists", "Search Insert Position", "Pow(x, n)", "Spiral Matrix", "Construct Binary Tree from Preorder and Inorder Traversal", "Flatten Binary Tree to Linked List", "Word Ladder", "Majority Element", "Number of Islands", "Implement Trie (Prefix Tree)", "Kth Largest Element in an Array", "Lowest Common Ancestor of a Binary Search Tree", "Decode String", "2 Keys Keyboard", "Largest Time for Given Digits", "Add Two Integers", "Add Two Numbers", "3Sum", "4Sum", "Merge Two Sorted Lists", "Reverse Nodes in k-Group", "Next Permutation", "Valid Sudoku", "Sudoku Solver", "Rotate Image", "Maximum Subarray", "Jump Game", "Minimum Path Sum", "Climbing Stairs", "Search a 2D Matrix", "Word Search", "Remove Duplicates from Sorted Array II", "Best Time to Buy and Sell Stock", "Longest Consecutive Sequence", "Gas Station", "Copy List with Random Pointer", "Word Break", "Find Minimum in Rotated Sorted Array", "Find Peak Element", "Word Search II", "Contains Duplicate", "Palindrome Linked List", "3Sum Smaller", "Ugly Number II", "H-Index", "Insert Delete GetRandom O(1)", "Non-overlapping Intervals", "String Compression", "Subarray Sum Equals K", "Task Scheduler", "Daily Temperatures", "Regions Cut By Slashes", "Students and Examinations", "Jump Game III", "Merge BSTs to Create Single BST", "Longest Path With Different Adjacent Characters", "Optimal Partition of String", "Maximum Energy Boost From Two Drinks"];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const questionList = document.getElementById("questionList");
+            const searchInput = document.getElementById("searchInput");
+            const toggleViewButton = document.getElementById("toggleView");
+            let isListView = false;
+
+            function createQuestionCard(question) {
+                const card = document.createElement("div");
+                card.className = "question-card";
+                card.setAttribute("data-question", question.toLowerCase().replace(/\s+/g, '-'));
+
+                card.innerHTML = `
+                    <div class="question-header">
+                        <h2>${question}</h2>
+                    </div>
+                    <div class="question-body">
+                        <textarea placeholder="Write your notes here..." class="note"></textarea>
+                        <div class="confidence">
+                            <label>Confidence:</label>
+                            <input type="range" min="1" max="10" value="5" class="slider">
+                            <span class="confidence-display">5</span>/10
+                        </div>
+                        <div class="complete">
+                            <input type="checkbox" class="complete-checkbox">
+                            <label>Complete</label>
+                        </div>
+                    </div>
+                `;
+
+                return card;
+            }
+
+            function renderQuestions(filteredQuestions = questions) {
+                questionList.innerHTML = '';
+                filteredQuestions.forEach(question => {
+                    const card = createQuestionCard(question);
+                    questionList.appendChild(card);
+                });
+            }
+
+            function saveData() {
+                const data = {};
+                document.querySelectorAll(".question-card").forEach(card => {
+                    const questionKey = card.getAttribute("data-question");
+                    const notes = card.querySelector(".note").value;
+                    const confidence = card.querySelector(".slider").value;
+                    const complete = card.querySelector(".complete-checkbox").checked;
+                    data[questionKey] = { notes, confidence, complete };
+                });
+                localStorage.setItem("leetcodeTrackerData", JSON.stringify(data));
+            }
+
+            function loadData() {
+                const savedData = localStorage.getItem("leetcodeTrackerData");
+                if (savedData) {
+                    const data = JSON.parse(savedData);
+                    document.querySelectorAll(".question-card").forEach(card => {
+                        const questionKey = card.getAttribute("data-question");
+                        if (data[questionKey]) {
+                            card.querySelector(".note").value = data[questionKey].notes;
+                            card.querySelector(".slider").value = data[questionKey].confidence;
+                            card.querySelector(".confidence-display").textContent = data[questionKey].confidence;
+                            card.querySelector(".complete-checkbox").checked = data[questionKey].complete;
+                        }
+                    });
+                }
+            }
+
+            questionList.addEventListener("input", (event) => {
+                if (event.target.classList.contains("slider")) {
+                    event.target.nextElementSibling.textContent = event.target.value;
+                }
+                saveData();
+            });
+
+            questionList.addEventListener("change", (event) => {
+                if (event.target.classList.contains("complete-checkbox")) {
+                    saveData();
+                }
+            });
+
+            searchInput.addEventListener("input", () => {
+                const searchTerm = searchInput.value.toLowerCase();
+                const filteredQuestions = questions.filter(question => 
+                    question.toLowerCase().includes(searchTerm)
+                );
+                renderQuestions(filteredQuestions);
+                loadData();
+            });
+
+            toggleViewButton.addEventListener("click", () => {
+                isListView = !isListView;
+                questionList.style.display = isListView ? "block" : "grid";
+                if (isListView) {
+                    questionList.style.maxWidth = "800px";
+                    questionList.style.margin = "0 auto";
+                } else {
+                    questionList.style.maxWidth = "none";
+                    questionList.style.margin = "0";
+                }
+            });
+
+            renderQuestions();
+            loadData();
+        });
+    </script>
+</body>
+</html>
